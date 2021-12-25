@@ -1,9 +1,12 @@
+#need validation for both word options to filter out any words with special characters
+
 import random
+import pwinput
+from word_list import wordList
 
 options = 'YN'
 game_options = 'AB'
 alert = "Option not available."
-dictionary = ['notice','barbarous','legal','useless','devilish','unused','mate','trust','six','building','stick','ocean','brash','drown','bone','launch','puncture','painful','few','fog','drum','powder','wander','deranged','combative','zoo','tire','possible','annoyed','explode','determined','tightfisted','serious','judicious','unusual','shiver','writing','animal','jellyfish','tired','tall','unequaled','curl','pastoral','parched','imminent','multiply','name','sin','dust','island','tank','scent','bucket','produce','repair','cheese','furniture','bee','swing','event','command','border','common','complex','escape','tangy','undesirable','melt','wren','suck','last','jumbled','license','young','toy','observe','crowd','sack','offbeat','tow','wail','ants','royal','wet','squeak','thin','outgoing','check','rejoice','salty','gainful','pumped','pest','unarmed','prevent','number','squeeze','forgetful','oval','describe','wistful','stranger','talk','insect','peel','busy','creator','store','colour','annoying','soft','chubby','arithmetic','overrated','rake','quiver','healthy','surround','average','embarrassed','clean','spurious','rhythm','swift','immense','crib','brawny','dislike','modern','zephyr','dramatic','scattered','contain','hang','continue','pet','murder','awesome','polish','maid','far-flung','flower','fool','dance','chance','obtain','expect','pan','gleaming','loaf','gruesome','blow','shake','wink','bathe','exuberant','knife','zip','married','strange','horn','expand','hands','fish','payment','weight','happen','mend','belief','wise','flight','scrawny','festive','art','utopian','chunky','strap','plucky','sleep','truthful','fire','silk','lumpy','spiffy','agonizing','pigs','picture','itchy','plastic','violent','sassy','van','ceaseless','lazy','useful','pie','aunt','company','corn','late','chess','ugly','fuzzy','public','tendency','serve','ticket','blush','auspicious','hushed','squalid','humorous','wreck','scale','necessary','steady','unkempt','tie','sock','cynical','wonder','likeable','economic','rebel','dinosaurs','committee','lumber','accurate','fine','wait','shape','deep','chew','gaudy','bushes','bang','fallacious','spiders','vacuous','zebra','mitten','confess','kindhearted','voiceless','brick','vigorous','stamp','fantastic']
 alphabet = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 
 already_guessed = [] #when they guess, validate it's not in this list, if not, write the guess to the list for later validation.
@@ -101,12 +104,12 @@ def gameplay_valid(message, i=1):
     except:
         return answer[:i] == game_options[:i]
 
-def word_choice_valid(message): #validation on word entry for multiplayer modern
+def word_choice_valid(): #validation on word entry for multiplayer modern
     while True:
-        choice = input(message).upper()
-        if int(len(choice)) >= 4 and int(len(choice)) <= 12:
+        choice = pwinput.pwinput(prompt='Please select a secret word with 4 to 12 letters: ').upper()
+        if int(len(choice)) >= 4 and int(len(choice)) <= 12 and choice.isalpha():
             break
-        print('Please select a word that has between 4 and 12 letters: ')
+        print('\nPlease select a word that has between 4 and 12 letters and no numbers or special characters.\n')
     return choice
 
 def guess_valid(message): #need to add already guess validation. !!not sure if this belongs here or in gamplay.
@@ -120,12 +123,12 @@ def guess_valid(message): #need to add already guess validation. !!not sure if t
         print(alert + ' Guess again:')
     return letter
 
-def load_word(): #can plug option for different dictionaries - easy, medium, hard - based on user input at start of game
-    word_index = random.choice(dictionary)
+def load_word(): #need to add validation somewhere to exclude special characters
+    while True:
+        word_index = random.choice(wordList)
+        if word_index.isalpha():
+            break
     return word_index
-
-#def reveal():
- #   print('The word is {}'.format(word_index)) #need to learn how to put future inputs into function
 
 def clear_list():
     already_guessed.clear()
@@ -142,7 +145,7 @@ def gameplay():
         if gamemode == True:
             secret_word = load_word().upper()
         else:
-            secret_word = word_choice_valid("Please select a secret word with 4 to 12 letters: ")
+            secret_word = word_choice_valid()
         x = list(secret_word) #made this a list
         chances = len(stages)-1
         print('\nYou have ' + str(chances) + ' chances to guess the word!')
@@ -201,5 +204,5 @@ def gameplay():
         ending()
         break
 
-print('---Hangman---')
+print('---Hangman---\n')
 gameplay()
